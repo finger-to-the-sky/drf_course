@@ -4,11 +4,14 @@ from django_filters.widgets import RangeWidget, BooleanWidget
 
 from projects.models import Project, ToDo
 
+
 class ProjectFilter(FilterSet):
     name = CharFilter(lookup_expr='contains')
+
     class Meta:
         model = Project
         fields = ['name']
+
 
 class ToDoFilter(FilterSet):
     project_id_name = CharFilter(lookup_expr='contains')
