@@ -1,5 +1,3 @@
-
-
 from rest_framework.serializers import ModelSerializer, StringRelatedField
 
 from users.models import User
@@ -13,7 +11,7 @@ class UserListModelSerializer(UserModelSerializer):
         fields = ('username', 'first_name', 'last_name', 'email')
 
 
-class ProfileModelSerializer(ModelSerializer):
+class ProjectModelSerializer(ModelSerializer):
     class Meta:
         model = Project
         fields = ('name', 'url', 'created_at', 'users')
