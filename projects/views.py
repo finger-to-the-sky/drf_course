@@ -17,7 +17,7 @@ class ToDoLimitOffsetPagination(LimitOffsetPagination):
 
 
 class ProjectModelViewSet(ModelViewSet):
-    # permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
     queryset = Project.objects.get_queryset().order_by('id')
     serializer_class = ProjectModelSerializer
     pagination_class = ProfileLimitOffsetPagination
