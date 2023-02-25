@@ -5,13 +5,9 @@ from users.models import User
 
 class Project(models.Model):
     name = models.CharField(max_length=32)
-    repo_url = models.URLField()
+    url = models.URLField()
     users = models.ManyToManyField(User)
     created_at = models.DateTimeField(auto_now_add=True)
-
-    @property
-    def todo_list(self):
-        return self.todo_set.all()
 
     def __str__(self):
         return self.name

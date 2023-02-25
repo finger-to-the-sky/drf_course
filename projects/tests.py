@@ -4,9 +4,9 @@ from rest_framework.test import APIRequestFactory, force_authenticate, APIClient
 from mixer.backend.django import mixer
 from django.contrib.auth.models import User
 
-from profiles.views import ProjectModelViewSet, ToDoModelViewSet
+from projects.views import ProjectModelViewSet, ToDoModelViewSet
 from users.models import User
-from profiles.models import Project, ToDo
+from projects.models import Project, ToDo
 
 
 class TestProjectModelViewSet(APITestCase):

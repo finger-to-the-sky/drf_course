@@ -45,7 +45,7 @@ INSTALLED_APPS = [
     'drf_yasg',
 
     'users',
-    'profiles',
+    'projects',
 
 ]
 
@@ -66,7 +66,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:3000",
 ]
 
-ROOT_URLCONF = 'ToDo_Service.urls'
+ROOT_URLCONF = 'service.urls'
 
 TEMPLATES = [
     {
@@ -85,7 +85,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'ToDo_Service.wsgi.application'
+WSGI_APPLICATION = 'service.wsgi.application'
 
 
 # Database
