@@ -16,6 +16,7 @@ class ProjectModelSerializer(ModelSerializer):
         model = Project
         fields = ('name', 'url', 'created_at', 'users')
 
+
 class ToDoModelSerializer(ModelSerializer):
     user = StringRelatedField()
     project = StringRelatedField()
