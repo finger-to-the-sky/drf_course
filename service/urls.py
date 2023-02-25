@@ -40,7 +40,7 @@ schema_view = get_schema_view(openapi.Info(
 router = DefaultRouter()
 router.register('users', UserModelViewSet)
 router.register('projects', ProjectModelViewSet)
-router.register('TODO', ToDoModelViewSet)
+router.register('todos', ToDoModelViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),

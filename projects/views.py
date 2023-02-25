@@ -25,7 +25,7 @@ class ProjectModelViewSet(ModelViewSet):
 
 
 class ToDoModelViewSet(ModelViewSet):
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
     queryset = ToDo.objects.get_queryset().order_by('project_id')
     serializer_class = ToDoModelSerializer
     pagination_class = ToDoLimitOffsetPagination

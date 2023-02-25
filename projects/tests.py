@@ -13,10 +13,10 @@ class TestProjectModelViewSet(APITestCase):
     def setUp(self):
         self.superuser = User.objects.create_superuser('django', 'django@gb.local', 'geekbrains')
         self.test_user = User.objects.create_user('test_user', 'test_user@gb.local', 'geekbrains')
-        self.project = Project.objects.create(name='test_project_name', repo_url='https://www.test.github.com/')
-        self.project_data = {"name": "test_project_name", "repo_url": "https://www.test.github.com/",
+        self.project = Project.objects.create(name='test_project_name', url='https://www.test.github.com/')
+        self.project_data = {"name": "test_project_name", "url": "https://www.test.github.com/",
                              "users": [self.superuser.uuid]}
-        self.project_data_upd = {'name': 'test_name_upd', 'repo_url': 'https://www.test.com/',
+        self.project_data_upd = {'name': 'test_name_upd', 'url': 'https://www.test.com/',
                                  'users': [self.test_user.uuid]}
 
     """ List projects """
@@ -115,7 +115,7 @@ class TestProjectModelViewSet(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         project = Project.objects.get(id=project.id)
         self.assertEqual(project.name, self.project_data_upd['name'])
-        self.assertEqual(project.repo_url, self.project_data_upd['repo_url'])
+        self.assertEqual(project.url, self.project_data_upd['url'])
 
     def test_edit_project_for_admin(self):
         project = mixer.blend(Project)
@@ -124,19 +124,19 @@ class TestProjectModelViewSet(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         project = Project.objects.get(id=project.id)
         self.assertEqual(project.name, self.project_data_upd['name'])
-        self.assertEqual(project.repo_url, self.project_data_upd['repo_url'])
+        self.assertEqual(project.url, self.project_data_upd['url'])
 
 
 class TestToDoModelViewSet(APITestCase):
     def setUp(self):
         self.superuser = User.objects.create_superuser('django', 'django@gb.local', 'geekbrains')
         self.user = User.objects.create_user('test_user', 'test_user@gb.local', 'geekbrains')
-        self.project = Project.objects.create(name='test_project_name', repo_url='https://www.test.github.com/')
+        self.project = Project.objects.create(name='test_project_name', url='https://www.test.github.com/')
         self.todo = ToDo.objects.create(name='test_todo_name', text='test_text', is_active=1,
                                         project_id=self.project, user_id=self.user)
         self.todo_data = {'name': 'test_todo_name', 'text': 'test_todo_text', 'is_active': 1,
-                          'project_id': f"http://127.0.0.1:8000/api/projects/{self.project.id}/",
-                          'user_id': f'http://127.0.0.1:8000/api/users/{self.user.uuid}/'}
+                          'project_id': f"{self.project.id}",
+                          'user_id': f'{self.user.uuid}'}
         self.todo_data_upd = {'name': 'test_todo_name_upd', 'text': 'test_todo_text_upd', 'is_active': 0}
 
     """List todos"""
