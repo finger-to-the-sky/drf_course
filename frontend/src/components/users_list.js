@@ -20,10 +20,13 @@ const UserList = ({users}) => {
         <div className="table-responsive">
             <table className="table table-striped table-sm">
                 <thead>
+                <tr>
                     <th>Username</th>
                     <th>First name</th>
                     <th>Last name</th>
-                    {users.map((user) => <UserItem user={user}/>)}
+
+                </tr>
+                {users.map((user) => <UserItem key={user.uuid} user={user}/>)}
                 </thead>
             </table>
         </div>

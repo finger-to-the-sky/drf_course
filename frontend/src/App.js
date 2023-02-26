@@ -10,10 +10,13 @@ import ToDosList from "./components/ToDoList";
 import ProjectDetail from "./components/projectDetail";
 import Head from "./components/Head";
 import UserDetail from "./components/userDetail";
-import {BrowserRouter, Routes, Link, Route} from 'react-router-dom'
+import {BrowserRouter, Link, Route, Routes} from 'react-router-dom'
 import LoginForm from "./components/Auth";
 import Cookies from "universal-cookie/lib";
 import {Button} from "react-bootstrap";
+import ProjectForm from "./components/ProjectForm";
+import TodoForm from "./components/ToDoForm";
+import ProjectEdit from "./components/ProjectEdit";
 
 const pageNotFound404 = ({location}) => {
     return (
@@ -28,6 +31,8 @@ class App extends React.Component {
         this.state = {
             'users': [],
             'projects': [],
+            'project': [],
+            'searched_projects': [],
             'todos': []
         }
     }
@@ -52,18 +57,18 @@ class App extends React.Component {
 
     setToken(token, username) {
         const cookies = new Cookies()
-        cookies.get('token', token)
-        cookies.get('username', username)
+        cookies.set('token', token)
+        cookies.set('username', username)
         this.setState({token: token, username: username}, () => this.loadData())
     }
 
     loadData() {
         const headers = this.getHeaders()
-        axios.get('http://127.0.0.1:8000/api/users/', {headers})
+        axios
+            .get('http://127.0.0.1:8000/api/users/', {headers})
             .then(response => {
-                const data = response.data
                 this.setState({
-                    'users': data.results
+                    'users': response.data.results
                 })
             })
             .catch(error => console.log(error))
@@ -72,7 +77,8 @@ class App extends React.Component {
             .get('http://127.0.0.1:8000/api/projects/', {headers})
             .then(response => {
                 this.setState({
-                    'projects': response.data.results
+                    'projects': response.data.results,
+                    'searched_projects': response.data.results
                 })
             })
             .catch(error => console.log(error))
@@ -85,7 +91,6 @@ class App extends React.Component {
                 })
             })
             .catch(error => console.log(error))
-
     }
 
     getHeaders() {
@@ -100,6 +105,69 @@ class App extends React.Component {
 
     isAuthenticated() {
         return this.state.token !== '';
+    }
+    deleteProject(id) {
+        const headers = this.getHeaders()
+        axios.delete(`http://127.0.0.1:8000/api/projects/${id}/`, {headers})
+            .then(response => {
+                this.setState({
+                    projects: this.state.projects.filter((item) => item.id !== id)
+                })
+            })
+            .catch(error => console.log(error))
+    }
+
+    deleteTodo(id) {
+        const headers = this.getHeaders()
+        axios.delete(`http://127.0.0.1:8000/api/todos/${id}/`, {headers})
+            .then(response => {
+                this.setState({todos: this.state.todos})
+            })
+            .catch(error => console.log(error))
+    }
+
+    createProject(name, repo, users) {
+        const headers = this.getHeaders()
+        const data = {name: name, url: repo, users: users}
+        axios.post('http://127.0.0.1:8000/api/projects/', data, {headers})
+            .then(response => {
+                let newProject = response.data;
+                this.setState({projects: [...this.state.projects, newProject]})
+            })
+            .catch(error => console.log(error))
+    }
+
+    editProject(id, name, repo, users) {
+        const headers = this.getHeaders()
+        const data = {name: name, repoUrl: repo, users: users}
+        axios.put(`http://127.0.0.1:8000/api/projects/${id}/`, data, {headers})
+            .then(response => {
+                let newProject = response.data;
+                this.setState({projects: [...this.state.projects, newProject]})
+            })
+            .catch(error => console.log(error))
+    }
+
+    createToDo(name, text, isActive, user, project) {
+        const headers = this.getHeaders()
+        const data = {name: name, text: text, isActive: isActive, userId: user, projectId: project}
+        axios.post(`http://127.0.0.1:8000/api/todos/`, data, {headers})
+            .then(response => {
+                let newTodo = response.data;
+                this.setState({todos: [...this.state.todos, newTodo]})
+            })
+            .catch(error => console.log(error))
+    }
+
+    searchProject(event) {
+        const query = event.target.value
+        let filteredProjects = this.state.projects.filter((project) => project.name.includes(query))
+        let allProjects = this.state.projects
+        if (query) {
+            this.setState({searched_projects: filteredProjects})
+        } else {
+            this.setState({searched_projects: allProjects})
+        }
     }
     componentDidMount() {
         this.getTokenFromStorage();
@@ -139,14 +207,26 @@ class App extends React.Component {
                         </div>
                     </nav>
                     <Routes>
-                        <Route exact path="/" element={<Head/>} />
-                            <Route exact path="users" element={<UsersList users={this.state.users} />}>
-                            <Route path=":uid" element={<UserDetail items={this.state.users} />} />
-                        </Route>
-                        <Route exact path="projects" element={<ProjectsList projects={this.state.projects} />}>
-                          <Route path=":id" element={<ProjectDetail items={this.state.projects} />} />
-                        </Route>
-                        <Route exact path="/notes" element={<ToDosList todos={this.state.todos} />} />
+                        <Route exact path='/' element={<Head/>}/>
+                            <Route exact path='/users' element={<UsersList users={this.state.users}/>}/>
+                            <Route path='/users/:uid' element={<UserDetail items={this.state.users}/>}/>
+
+                        <Route exact path='/projects/create/' element={<ProjectForm users={this.state.users}
+                                                                                            createProject={(name, repo, users) => this.createProject(name, repo, users)}/>}/>
+                        <Route exact path='/projects/edit/:id' element={<ProjectEdit users={this.state.users}
+                                                                                             projects={this.state.searched_projects}
+                                                                                             editProject={(id, name, repo, users) => this.editProject(id, name, repo, users)}/>}/>
+                        <Route exact path='/projects'
+                               element={<ProjectsList projects={this.state.searched_projects}
+                                                              deleteProject={(id) => this.deleteProject(id)}
+                                                              searchProject={(event) => this.searchProject(event)}/>}/>
+                        <Route path='/projects/:id' element={<ProjectDetail items={this.state.projects}/>}/>
+
+                        <Route exact path='/notes/create/'
+                               element={<TodoForm users={this.state.users} projects={this.state.projects}
+                                                          createTodo={(name, text, isActive, userId, projectId) => this.createToDo(name, text, isActive, userId, projectId)}/>}/>
+                        <Route exact path='/notes' element={<ToDosList todos={this.state.todos}
+                                                                               deleteTodo={(id) => this.deleteTodo(id)}/>}/>
                         <Route exact path='/login' element={<LoginForm
                             getToken={(username, password) => this.getToken(username, password)}/>}/>
                         <Route element={pageNotFound404}/>
