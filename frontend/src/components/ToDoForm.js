@@ -46,12 +46,12 @@ class TodoForm extends React.Component {
                         <label htmlFor="userId">User:</label>
                         <select name="userId" className="form-control"
                                 onChange={(event) => this.handlerOnChange(event)}> {this.props.users.map((user) =>
-                            <option key={user.uid} value={user.url}>{user.username}</option>)}
+                            <option key={user.uid} value={user.uuid}>{user.username}</option>)}
                         </select>
                         <label htmlFor="projectId">Project:</label>
                         <select name="projectId" className="form-control"
                                 onChange={(event) => this.handlerOnChange(event)}> {this.props.projects.map((project) =>
-                            <option key={project.id} value={project.url}>{project.name}</option>)}
+                            <option key={project.id} value={project.id}>{project.name}</option>)}
                         </select>
                     </div>
                     <Button type="submit" className='btn btn-primary'>Create</Button>

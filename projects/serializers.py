@@ -14,7 +14,7 @@ class UserListModelSerializer(UserModelSerializer):
 class ProjectModelSerializer(ModelSerializer):
     class Meta:
         model = Project
-        fields = ('name', 'url', 'created_at', 'users')
+        fields = ('id', 'name', 'url', 'created_at', 'users')
 
 
 class ToDoModelSerializer(ModelSerializer):
