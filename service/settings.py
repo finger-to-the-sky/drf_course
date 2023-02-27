@@ -65,6 +65,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
 ]
+CORS_ORIGIN_ALLOW_ALL = True
 
 ROOT_URLCONF = 'service.urls'
 
@@ -93,8 +94,12 @@ WSGI_APPLICATION = 'service.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'ToDo_Service',
+        'USER': 'postgres',
+        'PASSWORD': 'password_postgres',
+        'HOST': 'db',
+        'PORT': '5432'
     }
 }
 
