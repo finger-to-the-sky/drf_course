@@ -1,0 +1,42 @@
+version: '3'
+
+services:
+  db:
+    image: postgres:13.1
+    privileged: true
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password_postgres
+      POSTGRES_DB: ToDo_Service
+  backend:
+    build:
+      context: ../
+      dockerfile: ../drf_course/docker/Dockerfile
+    expose:
+      - 8080
+    command: bash -c "
+      ./wait-for-postgres.sh db
+      && python manage.py migrate
+      && python manage.py create_user 20
+      && python manage.py project_create 20
+      && python manage.py todos_create 20
+      && gunicorn service.wsgi -b 0.0.0.0:8080
+      "
+    depends_on:
+      - db
+  nginx:
+    build: ../docker/nginx
+    ports:
+      - 8000:80
+    depends_on:
+      - backend
+
+  frontend:
+    build: ../frontend
+    ports:
+      - 80:80
+    depends_on:
+      - nginx
